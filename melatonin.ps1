@@ -21,7 +21,12 @@ public class Win32 {
 }
 "@
 
-[Win32]::ShowWindow([Win32]::GetConsoleWindow(), 0)
+[Win32]::ShowWindow([Win32]::GetConsoleWindow(), 0) | Out-Null
+
+# PowerShell parses $ES_AWAKE as signed Int32 (-2147483645), which fails the uint cast.
+# Convert from hex string to avoid any signed/unsigned ambiguity.
+$ES_AWAKE   = [System.Convert]::ToUInt32("80000003", 16)  # ES_CONTINUOUS|ES_DISPLAY_REQUIRED|ES_SYSTEM_REQUIRED
+$ES_RELEASE = [System.Convert]::ToUInt32("80000000", 16)  # ES_CONTINUOUS only — releases the request
 
 # --- Tray icon ---
 function New-CircleIcon([System.Drawing.Color]$color) {
@@ -60,12 +65,12 @@ $anchorHwnd           = $anchor.Handle  # creates HWND without showing the form
 # --- Timer ---
 $timer          = New-Object System.Windows.Forms.Timer
 $timer.Interval = 30000
-$timer.Add_Tick({ [Win32]::SetThreadExecutionState(0x80000003) | Out-Null })
+$timer.Add_Tick({ [Win32]::SetThreadExecutionState($ES_AWAKE) | Out-Null })
 
 # --- State ---
 function Set-AwakeState([bool]$on) {
     if ($on) {
-        [Win32]::SetThreadExecutionState(0x80000003) | Out-Null
+        [Win32]::SetThreadExecutionState($ES_AWAKE) | Out-Null
         $script:timer.Start()
         $script:tray.Icon = $script:iconOn
         $script:tray.Text = "melatonin: wide awake"
@@ -73,7 +78,7 @@ function Set-AwakeState([bool]$on) {
         [Win32]::CheckMenuItem($script:hMenu, 2, 0x0000) | Out-Null  # MF_UNCHECKED
     } else {
         $script:timer.Stop()
-        [Win32]::SetThreadExecutionState(0x80000000) | Out-Null
+        [Win32]::SetThreadExecutionState($ES_RELEASE) | Out-Null
         $script:tray.Icon = $script:iconOff
         $script:tray.Text = "melatonin: getting drowsy"
         [Win32]::CheckMenuItem($script:hMenu, 1, 0x0000) | Out-Null
@@ -94,7 +99,7 @@ $tray.Add_MouseClick({
         2 { Set-AwakeState $false }
         3 {
             $script:timer.Stop()
-            [Win32]::SetThreadExecutionState(0x80000000) | Out-Null
+            [Win32]::SetThreadExecutionState($ES_RELEASE) | Out-Null
             [Win32]::DestroyMenu($script:hMenu) | Out-Null
             $script:tray.Visible = $false
             $script:tray.Dispose()

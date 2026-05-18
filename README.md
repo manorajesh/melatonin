@@ -1,6 +1,6 @@
 # melatonin
 
-A Windows system tray app that keeps your display awake
+A Windows system tray app that keeps your display awake without elevated privileges or installing an application.
 
 ## installation
 
@@ -8,7 +8,7 @@ A Windows system tray app that keeps your display awake
 git clone https://github.com/manorajesh/melatonin
 ```
 
-No build step, no dependencies. Requires only PowerShell and Windows Forms, both built into Windows 11.
+No build step, no dependencies. Requires __only__ PowerShell and Windows Forms, both built into Windows 11.
 
 ## usage
 

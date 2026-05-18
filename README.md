@@ -12,7 +12,13 @@ No build step, no dependencies. Requires only PowerShell and Windows Forms, both
 
 ## usage
 
-Double-click `melatonin.vbs`. No console window appears — it runs entirely as a tray icon.
+Create a Windows shortcut with this target:
+
+```
+powershell.exe -ExecutionPolicy Bypass -WindowStyle Hidden -File "C:\path\to\melatonin.ps1"
+```
+
+Set **Run: Minimized** in the shortcut properties. Double-clicking it launches melatonin as a tray icon with only a brief taskbar flash on startup.
 
 Right-click the tray icon:
 
@@ -29,10 +35,8 @@ Starts in **wide awake** mode. Green dot = suppressing. Gray dot = released.
 
 Uses the Windows `SetThreadExecutionState` API with `ES_CONTINUOUS | ES_DISPLAY_REQUIRED | ES_SYSTEM_REQUIRED` — the same mechanism video players use to prevent sleep during playback. No mouse jiggling, no fake keypresses. Refreshes the state every 30 seconds.
 
-The launcher (`melatonin.vbs`) runs via `wscript.exe`, which has no console, so PowerShell starts fully hidden before any window can flash.
-
 ## shortcut
 
-To pin it to the Start menu or taskbar, create a shortcut to `melatonin.vbs` and set a custom icon.
+To pin to the Start menu or taskbar, right-click the shortcut → Pin to Start / Pin to taskbar.
 
 No installation required. Runs entirely on built-in Windows components.

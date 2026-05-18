@@ -54,7 +54,9 @@ $hMenu = [Win32]::CreatePopupMenu()
 [Win32]::AppendMenu($hMenu, 0x0000, [IntPtr]1, "wide awake")     | Out-Null
 [Win32]::AppendMenu($hMenu, 0x0000, [IntPtr]2, "getting drowsy") | Out-Null
 [Win32]::AppendMenu($hMenu, 0x0800, [IntPtr]0, $null)            | Out-Null  # separator
-[Win32]::AppendMenu($hMenu, 0x0000, [IntPtr]3, "goodnight")      | Out-Null
+[Win32]::AppendMenu($hMenu, 0x0000, [IntPtr]3, "dream log")      | Out-Null
+[Win32]::AppendMenu($hMenu, 0x0800, [IntPtr]0, $null)            | Out-Null  # separator
+[Win32]::AppendMenu($hMenu, 0x0000, [IntPtr]4, "goodnight")      | Out-Null
 
 # Hidden anchor window required by TrackPopupMenu
 $anchor               = New-Object System.Windows.Forms.Form
@@ -98,6 +100,10 @@ $tray.Add_MouseClick({
         1 { Set-AwakeState $true }
         2 { Set-AwakeState $false }
         3 {
+            $msg = if ($Error.Count -eq 0) { "no errors" } else { $Error | Out-String }
+            [System.Windows.Forms.MessageBox]::Show($msg, "melatonin", [System.Windows.Forms.MessageBoxButtons]::OK) | Out-Null
+        }
+        4 {
             $script:timer.Stop()
             [Win32]::SetThreadExecutionState($ES_RELEASE) | Out-Null
             [Win32]::DestroyMenu($script:hMenu) | Out-Null

@@ -12,16 +12,15 @@ No build step, no dependencies. Requires only PowerShell and Windows Forms, both
 
 ## usage
 
-```
-powershell -WindowStyle Hidden -ExecutionPolicy Bypass -File melatonin.ps1
-```
+Double-click `melatonin.vbs`. No console window appears — it runs entirely as a tray icon.
 
-A small circle appears in the system tray. Right-click it:
+Right-click the tray icon:
 
 | option | effect |
 |---|---|
 | **wide awake** | suppresses sleep — display stays on |
 | **getting drowsy** | releases control — normal sleep settings resume |
+| **dream log** | shows any errors from the current session |
 | **goodnight** | exits |
 
 Starts in **wide awake** mode. Green dot = suppressing. Gray dot = released.
@@ -30,12 +29,10 @@ Starts in **wide awake** mode. Green dot = suppressing. Gray dot = released.
 
 Uses the Windows `SetThreadExecutionState` API with `ES_CONTINUOUS | ES_DISPLAY_REQUIRED | ES_SYSTEM_REQUIRED` — the same mechanism video players use to prevent sleep during playback. No mouse jiggling, no fake keypresses. Refreshes the state every 30 seconds.
 
+The launcher (`melatonin.vbs`) runs via `wscript.exe`, which has no console, so PowerShell starts fully hidden before any window can flash.
+
 ## shortcut
 
-To make it launchable without a terminal, create a shortcut with this target:
-
-```
-powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File "C:\path\to\melatonin.ps1"
-```
+To pin it to the Start menu or taskbar, create a shortcut to `melatonin.vbs` and set a custom icon.
 
 No installation required. Runs entirely on built-in Windows components.

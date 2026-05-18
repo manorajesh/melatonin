@@ -4,6 +4,14 @@ A Windows system tray app that keeps your display awake — named after the slee
 
 Every other keep-awake app is named after something that wires you up: Caffeine, Amphetamine, Theine. melatonin is the opposite: it's the thing your body produces to put you to sleep, quietly doing the exact job it was never meant to do.
 
+## installation
+
+```
+git clone https://github.com/manorajesh/melatonin
+```
+
+No build step, no dependencies. Requires only PowerShell and Windows Forms, both built into Windows 11.
+
 ## usage
 
 ```

@@ -30,15 +30,19 @@ $ES_RELEASE = [System.Convert]::ToUInt32("80000000", 16)  # ES_CONTINUOUS only â
 
 # --- Tray icon ---
 function New-CircleIcon([System.Drawing.Color]$color) {
-    $bmp = New-Object System.Drawing.Bitmap 32, 32
-    $g   = [System.Drawing.Graphics]::FromImage($bmp)
+    $bmp   = New-Object System.Drawing.Bitmap 32, 32
+    $g     = [System.Drawing.Graphics]::FromImage($bmp)
+    $brush = New-Object System.Drawing.SolidBrush $color
     $g.SmoothingMode      = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
     $g.CompositingQuality = [System.Drawing.Drawing2D.CompositingQuality]::HighQuality
     $g.PixelOffsetMode    = [System.Drawing.Drawing2D.PixelOffsetMode]::HighQuality
     $g.Clear([System.Drawing.Color]::Transparent)
-    $g.FillEllipse((New-Object System.Drawing.SolidBrush $color), 2, 2, 27, 27)
+    $g.FillEllipse($brush, 2, 2, 27, 27)
+    $brush.Dispose()
     $g.Dispose()
-    return [System.Drawing.Icon]::FromHandle($bmp.GetHicon())
+    $icon = [System.Drawing.Icon]::FromHandle($bmp.GetHicon())
+    $bmp.Dispose()
+    return $icon
 }
 
 $iconOn  = New-CircleIcon ([System.Drawing.Color]::FromArgb(100, 220, 100))

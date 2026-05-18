@@ -71,15 +71,28 @@ $anchorHwnd           = $anchor.Handle  # creates HWND without showing the form
 # --- Timer ---
 $timer          = New-Object System.Windows.Forms.Timer
 $timer.Interval = 30000
-$timer.Add_Tick({ [Win32]::SetThreadExecutionState($ES_AWAKE) | Out-Null })
+$timer.Add_Tick({
+    [Win32]::SetThreadExecutionState($ES_AWAKE) | Out-Null
+    Update-TrayText
+})
 
 # --- State ---
+$script:awakeStart = $null
+
+function Update-TrayText {
+    $elapsed = [DateTime]::Now - $script:awakeStart
+    $h = [int]$elapsed.TotalHours
+    $m = $elapsed.Minutes
+    $script:tray.Text = if ($h -gt 0) { "melatonin: wide awake (${h}h ${m}m)" } else { "melatonin: wide awake (${m}m)" }
+}
+
 function Set-AwakeState([bool]$on) {
     if ($on) {
         [Win32]::SetThreadExecutionState($ES_AWAKE) | Out-Null
         $script:timer.Start()
-        $script:tray.Icon = $script:iconOn
-        $script:tray.Text = "melatonin: wide awake"
+        $script:tray.Icon  = $script:iconOn
+        $script:awakeStart = [DateTime]::Now
+        Update-TrayText
         [Win32]::CheckMenuItem($script:hMenu, 1, 0x0008) | Out-Null  # MF_CHECKED
         [Win32]::CheckMenuItem($script:hMenu, 2, 0x0000) | Out-Null  # MF_UNCHECKED
     } else {

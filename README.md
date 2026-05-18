@@ -1,8 +1,6 @@
 # melatonin
 
-A Windows system tray app that keeps your display awake — named after the sleep hormone, not a stimulant.
-
-Every other keep-awake app is named after something that wires you up: Caffeine, Amphetamine, Theine. melatonin is the opposite: it's the thing your body produces to put you to sleep, quietly doing the exact job it was never meant to do.
+A Windows system tray app that keeps your display awake
 
 ## usage
 
